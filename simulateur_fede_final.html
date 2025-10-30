@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur Économique - La Fédération de l'Immobilier</title>
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #209C9A 0%, #122739 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #209C9A 0%, #122739 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            background: #F0EDE5;
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .progress-step {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #1A1A1A;
+            border-bottom: 4px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .progress-step.active {
+            background: #209C9A;
+            color: white;
+            border-bottom-color: #122739;
+        }
+        
+        .progress-step.completed {
+            background: #F0EDE5;
+            color: #209C9A;
+        }
+        
+        .content {
+            padding: 50px;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 2.2em;
+            color: #1A1A1A;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #209C9A;
+            padding-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #F0EDE5;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #209C9A;
+            box-shadow: 0 0 0 3px rgba(32, 156, 154, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .info-box {
+            background: #F0EDE5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #209C9A;
+        }
+        
+        .info-box p {
+            color: #1A1A1A;
+            line-height: 1.6;
+        }
+        
+        .flux-highlight {
+            background: linear-gradient(135deg, #209C9A 0%, #122739 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .flux-highlight h3 {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        
+        .flux-highlight input {
+            font-size: 2em;
+            text-align: center;
+            font-weight: 700;
+            border: 3px solid white;
+            background: white;
+            color: #209C9A;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+        }
+        
+        button {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'League Spartan', sans-serif;
+        }
+        
+        .btn-primary {
+            background: #209C9A;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background: #1a8583;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(32, 156, 154, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #F0EDE5;
+            color: #1A1A1A;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e2da;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            background: #F0EDE5;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .service-item {
+            display: flex;
+            align-items: center;
+            color: #1A1A1A;
+            font-size: 0.95em;
+        }
+        
+        .service-item::before {
+            content: "✓";
+            color: #209C9A;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-right: 10px;
+        }
+        
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .pack-card {
+            background: white;
+            border: 3px solid #F0EDE5;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .pack-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: #209C9A;
+        }
+        
+        .pack-card.selected {
+            border-color: #209C9A;
+            background: linear-gradient(135deg, rgba(32, 156, 154, 0.05) 0%, rgba(18, 39, 57, 0.05) 100%);
+        }
+        
+        .pack-card h3 {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 1.6em;
+            color: #209C9A;
+            margin-bottom: 15px;
+        }
+        
+        .pack-price {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin: 15px 0;
+        }
+        
+        .pack-gain {
+            background: #209C9A;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 1.1em;
+        }
+        
+        .pack-gain.negative {
+            background: #1A1A1A;
+        }
+        
+        .result-summary {
+            background: linear-gradient(135deg, #209C9A 0%, #122739 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .result-summary h2 {
+            color: white;
+            border-bottom-color: white;
+            font-size: 2.5em;
+        }
+        
+        .economy-amount {
+            font-size: 4em;
+            font-weight: 700;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+        
+        .summary-card h3 {
+            font-family: 'League Spartan', sans-serif;
+            color: #209C9A;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0EDE5;
+        }
+        
+        .summary-line:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #209C9A;
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 2px solid #209C9A;
+        }
+        
+        .unit-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-left: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row,
+            .form-row-3,
+            .comparison-cards,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-bar {
+                flex-wrap: wrap;
+            }
+            
+            .progress-step {
+                font-size: 0.8em;
+                padding: 15px 10px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">La Fédération de l'Immobilier</div>
+            <div class="subtitle">Simulateur Économique - Comparatif Personnalisé</div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-step active" onclick="goToStep(1)">1. Données Générales</div>
+            <div class="progress-step" onclick="goToStep(2)">2. Logiciels & Outils</div>
+            <div class="progress-step" onclick="goToStep(3)">3. Frais Publicitaire</div>
+            <div class="progress-step" onclick="goToStep(4)">4. Autres Frais</div>
+            <div class="progress-step" onclick="goToStep(5)">5. Résultats</div>
+        </div>
+        
+        <div class="content">
+            <!-- ÉTAPE 1: DONNÉES GÉNÉRALES -->
+            <div class="step active" id="step1">
+                <h2>Données Générales de votre Agence</h2>
+                
+                <div class="info-box">
+                    <p>Commencez par renseigner les informations clés de votre agence immobilière. Ces données permettront de calculer précisément vos charges actuelles.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nom de votre Agence</label>
+                    <input type="text" id="agency_name" placeholder="Entrez le nom de votre agence" value="Mon Agence Immobilière">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Chiffre d'Affaires Annuel (€)</label>
+                        <input type="number" id="ca_actuel" placeholder="150000" value="150000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nombre de Ventes par An</label>
+                        <input type="number" id="ventes_actuel" placeholder="16" value="16">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Commission Moyenne par Transaction (€)</label>
+                        <input type="number" id="commission_actuel" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nombre de Conseillers (hors dirigeant)</label>
+                        <input type="number" id="conseillers_actuel" placeholder="0" value="0">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre de Dirigeants</label>
+                        <input type="number" id="dirigeant_actuel" placeholder="1" value="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Rémunération des Conseillers (%)</label>
+                        <input type="number" id="rem_conseillers" placeholder="30" value="30" step="0.1">
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn-secondary" style="visibility: hidden;">Précédent</button>
+                    <button class="btn-primary" onclick="nextStep()">Suivant</button>
+                </div>
+            </div>
+            
+            <!-- ÉTAPE 2: LOGICIELS -->
+            <div class="step" id="step2">
+                <h2>Logiciels & Outils Métier</h2>
+                
+                <div class="info-box">
+                    <p>Listez tous vos outils et logiciels actuels avec leur coût mensuel. Laissez à 0 les outils que vous n'utilisez pas.</p>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Logiciel Métier (compte admin)</label>
+                    <input type="number" id="logiciel_admin" placeholder="90" value="90">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Comptes Utilisateurs</label>
+                    <input type="number" id="comptes_users" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Logiciel de Pige</label>
+                    <input type="number" id="logiciel_pige" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Ventes Prédictives</label>
+                    <input type="number" id="ventes_predictives" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>VR 360°</label>
+                    <input type="number" id="vr360" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>IA Générative (Annonces)</label>
+                    <input type="number" id="ia_annonces" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Estimations en ligne</label>
+                    <input type="number" id="estimations" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Avis de Valeur / Étude de Marché</label>
+                    <input type="number" id="avis_valeur" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Signature Électronique</label>
+                    <input type="number" id="signature" placeholder="10" value="10">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Papeterie, Juridique (Mandat, etc.)</label>
+                    <input type="number" id="papeterie" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Vidéo, Retouche Photo</label>
+                    <input type="number" id="video_photo" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Communication / Community Manager</label>
+                    <input type="number" id="comm" placeholder="200" value="200">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Formation / Coaching ALUR</label>
+                    <input type="number" id="formation" placeholder="25" value="25">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>CRM / Gestion contacts</label>
+                    <input type="number" id="crm" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Logiciel de Comptabilité</label>
+                    <input type="number" id="compta" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="previousStep()">Précédent</button>
+                    <button class="btn-primary" onclick="nextStep()">Suivant</button>
+                </div>
+            </div>
+            
+            <!-- ÉTAPE 3: FRAIS PUBLICITAIRE -->
+            <div class="step" id="step3">
+                <h2>Frais de Flux Publicitaire</h2>
+                
+                <div class="flux-highlight">
+                    <h3>Nombre de Flux par Mois</h3>
+                    <p style="margin-bottom: 15px; opacity: 0.9;">Information clé pour le calcul de vos coûts publicitaires</p>
+                    <input type="number" id="nb_flux" placeholder="20" value="20" style="width: 100%;">
+                    <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">Ce nombre déterminera le prix de votre pack à La Fédération</p>
+                </div>
+                
+                <div class="info-box">
+                    <p>Renseignez le coût par flux pour chaque annonceur que vous utilisez actuellement. Le nombre de flux ci-dessus sera multiplié par ces coûts.</p>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Leboncoin</label>
+                    <input type="number" id="leboncoin" placeholder="54" value="54">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Seloger</label>
+                    <input type="number" id="seloger" placeholder="0" value="0">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Bien'ici</label>
+                    <input type="number" id="bienici" placeholder="0" value="0">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Ubiflow</label>
+                    <input type="number" id="ubiflow" placeholder="0" value="0">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>ParuVendu</label>
+                    <input type="number" id="paruvendu" placeholder="0" value="0">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Le Figaro Immobilier</label>
+                    <input type="number" id="figaro" placeholder="0" value="0">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Logic-Immo</label>
+                    <input type="number" id="logicimmo" placeholder="0" value="0">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Autres Annonceurs</label>
+                    <input type="number" id="autres_annonceurs" placeholder="0" value="0">
+                    <span class="unit-label">€/flux</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Publicité Locale (flyers, etc.)</label>
+                    <input type="number" id="pub_locale" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="form-row-3">
+                    <label>Google Ads / Facebook Ads</label>
+                    <input type="number" id="ads_online" placeholder="0" value="0">
+                    <span class="unit-label">€/mois</span>
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="previousStep()">Précédent</button>
+                    <button class="btn-primary" onclick="nextStep()">Suivant</button>
+                </div>
+            </div>
+            
+            <!-- ÉTAPE 4: AUTRES FRAIS -->
+            <div class="step" id="step4">
+                <h2>Autres Frais de Fonctionnement</h2>
+                
+                <div class="info-box">
+                    <p>Complétez tous les autres frais liés au fonctionnement de votre agence.</p>
+                </div>
+                
+                <h3 style="color: #209C9A; margin: 30px 0 20px 0; font-family: 'League Spartan', sans-serif;">Frais de Franchise / Réseau</h3>
+                
+                <div class="form-group">
+                    <label>Royalties Franchise ou Licence de marque (€/an)</label>
+                    <input type="number" id="royalties_franchise" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Royalties Communication (€/an)</label>
+                    <input type="number" id="royalties_comm" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Frais Fixes Réseau (€/an)</label>
+                    <input type="number" id="frais_fixes" placeholder="0" value="0">
+                </div>
+                
+                <h3 style="color: #209C9A; margin: 30px 0 20px 0; font-family: 'League Spartan', sans-serif;">Frais de Gestion</h3>
+                
+                <div class="form-group">
+                    <label>Juriste / Assistance Juridique (€/mois)</label>
+                    <input type="number" id="juriste" placeholder="90" value="90">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Gestion Administrative - Coût Horaire (€/h)</label>
+                        <input type="number" id="cout_horaire" placeholder="80" value="80">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nombre d'Heures par Mois</label>
+                        <input type="number" id="heures_mois" placeholder="20" value="20">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Cotisation Professionnelle (€/an)</label>
+                    <input type="number" id="cotisation" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Assurance RC Pro (€/an)</label>
+                    <input type="number" id="assurance_rc" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Garantie Financière (€/an)</label>
+                    <input type="number" id="garantie_financiere" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Expert Comptable (€/an)</label>
+                    <input type="number" id="expert_comptable" placeholder="0" value="0">
+                </div>
+                
+                <h3 style="color: #209C9A; margin: 30px 0 20px 0; font-family: 'League Spartan', sans-serif;">Frais de Structure (Optionnel)</h3>
+                
+                <div class="form-group">
+                    <label>Loyer Bureau / Local (€/mois)</label>
+                    <input type="number" id="loyer" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Électricité / Eau / Internet (€/mois)</label>
+                    <input type="number" id="energie" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Téléphone / Mobile (€/mois)</label>
+                    <input type="number" id="telephone" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Carburant / Déplacements (€/mois)</label>
+                    <input type="number" id="carburant" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Fournitures de Bureau (€/mois)</label>
+                    <input type="number" id="fournitures" placeholder="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Autres Frais Divers (€/mois)</label>
+                    <input type="number" id="autres_frais" placeholder="0" value="0">
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="previousStep()">Précédent</button>
+                    <button class="btn-primary" onclick="calculateAndShowResults()">Voir les Résultats</button>
+                </div>
+            </div>
+            
+            <!-- ÉTAPE 5: RÉSULTATS -->
+            <div class="step" id="step5">
+                <div class="result-summary">
+                    <h2 id="agency_result_name">Résultats pour Mon Agence Immobilière</h2>
+                    <p style="font-size: 1.3em; margin: 20px 0;">Avec le Pack sélectionné (<span id="nb_flux_result">20</span> flux)</p>
+                    <div class="economy-amount" id="economy_result">+ 13 326 €</div>
+                    <p style="font-size: 1.2em;">d'économie par an par rapport à votre situation actuelle</p>
+                    <p style="font-size: 1em; margin-top: 15px; opacity: 0.9;">Soit <strong><span id="economy_monthly_result">1 111 €</span></strong> par mois</p>
+                </div>
+                
+                <h2 style="margin-top: 50px;">Comparatif des 3 Packs</h2>
+                
+                <div class="comparison-cards" id="packs_comparison">
+                    <!-- Les cartes seront générées par JavaScript -->
+                </div>
+                
+                <h2 style="margin-top: 50px;">Détail des Charges</h2>
+                
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <h3>Situation Actuelle</h3>
+                        <div id="current_summary">
+                            <!-- Sera rempli par JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <h3>La Fédération Immobilière</h3>
+                        <div class="info-box" style="margin-bottom: 20px;">
+                            <p style="font-size: 0.9em;"><strong>Services Inclus dans tous les packs:</strong></p>
+                        </div>
+                        <div class="services-grid" style="margin-bottom: 20px; font-size: 0.85em;">
+                            <div class="service-item">Logiciels Métier</div>
+                            <div class="service-item">Pige</div>
+                            <div class="service-item">VR 360°</div>
+                            <div class="service-item">IA Générative</div>
+                            <div class="service-item">Estimations</div>
+                            <div class="service-item">Signature Électronique</div>
+                            <div class="service-item">Communication</div>
+                            <div class="service-item">Formation ALUR</div>
+                            <div class="service-item">Publicité (flux inclus)</div>
+                            <div class="service-item">Assistance Juridique</div>
+                            <div class="service-item">Gestion Administrative</div>
+                            <div class="service-item">Et bien plus...</div>
+                        </div>
+                        <div id="fede_summary">
+                            <!-- Sera rempli par JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="buttons" style="margin-top: 40px;">
+                    <button class="btn-secondary" onclick="previousStep()">Modifier les Données</button>
+                    <button class="btn-primary" onclick="window.print()">Imprimer / Sauvegarder PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStep = 1;
+        
+        // Grilles tarifaires officielles
+        const GRILLE_ESSENTIEL = [
+            {flux: 5, prixUnitaire: 20, totalMensuel: 100},
+            {flux: 10, prixUnitaire: 19, totalMensuel: 190},
+            {flux: 20, prixUnitaire: 18, totalMensuel: 360},
+            {flux: 30, prixUnitaire: 17, totalMensuel: 510},
+            {flux: 40, prixUnitaire: 16, totalMensuel: 640},
+            {flux: 50, prixUnitaire: 15, totalMensuel: 750},
+            {flux: 60, prixUnitaire: 14.5, totalMensuel: 870},
+            {flux: 70, prixUnitaire: 14, totalMensuel: 980},
+            {flux: 80, prixUnitaire: 13.5, totalMensuel: 1080},
+            {flux: 90, prixUnitaire: 12.5, totalMensuel: 1125}
+        ];
+        
+        const GRILLE_VISIBILITE = [
+            {flux: 5, prixUnitaire: 45, totalMensuel: 225},
+            {flux: 10, prixUnitaire: 41, totalMensuel: 410},
+            {flux: 20, prixUnitaire: 34, totalMensuel: 680},
+            {flux: 30, prixUnitaire: 31, totalMensuel: 930},
+            {flux: 40, prixUnitaire: 31, totalMensuel: 1240},
+            {flux: 50, prixUnitaire: 30, totalMensuel: 1500},
+            {flux: 60, prixUnitaire: 29.5, totalMensuel: 1770},
+            {flux: 70, prixUnitaire: 29, totalMensuel: 2030},
+            {flux: 80, prixUnitaire: 28.5, totalMensuel: 2280},
+            {flux: 90, prixUnitaire: 28, totalMensuel: 2520},
+            {flux: 100, prixUnitaire: 25, totalMensuel: 2500}
+        ];
+        
+        const GRILLE_ALLINCLUS = [
+            {flux: 5, prixUnitaire: 66, totalMensuel: 330},
+            {flux: 10, prixUnitaire: 62, totalMensuel: 620},
+            {flux: 20, prixUnitaire: 54, totalMensuel: 1080},
+            {flux: 30, prixUnitaire: 45, totalMensuel: 1350},
+            {flux: 40, prixUnitaire: 44, totalMensuel: 1760},
+            {flux: 50, prixUnitaire: 43, totalMensuel: 2150},
+            {flux: 60, prixUnitaire: 42.5, totalMensuel: 2550},
+            {flux: 70, prixUnitaire: 42, totalMensuel: 2950},
+            {flux: 80, prixUnitaire: 41, totalMensuel: 3280},
+            {flux: 90, prixUnitaire: 40, totalMensuel: 3600},
+            {flux: 100, prixUnitaire: 39, totalMensuel: 3900}
+        ];
+        
+        function getPrixPack(nbFlux, grille, prixMaxUnitaire) {
+            for (let i = 0; i < grille.length; i++) {
+                if (grille[i].flux === nbFlux) {
+                    return {
+                        prixUnitaire: grille[i].prixUnitaire,
+                        totalMensuel: grille[i].totalMensuel
+                    };
+                }
+            }
+            
+            let palierInferieur = null;
+            let palierSuperieur = null;
+            
+            for (let i = 0; i < grille.length; i++) {
+                if (grille[i].flux < nbFlux) {
+                    palierInferieur = grille[i];
+                }
+                if (grille[i].flux > nbFlux && !palierSuperieur) {
+                    palierSuperieur = grille[i];
+                }
+            }
+            
+            if (!palierSuperieur && palierInferieur) {
+                const prixUnitaire = Math.max(palierInferieur.prixUnitaire - 0.5, prixMaxUnitaire);
+                return {
+                    prixUnitaire: prixUnitaire,
+                    totalMensuel: nbFlux * prixUnitaire
+                };
+            }
+            
+            if (!palierInferieur && palierSuperieur) {
+                return {
+                    prixUnitaire: palierSuperieur.prixUnitaire,
+                    totalMensuel: nbFlux * palierSuperieur.prixUnitaire
+                };
+            }
+            
+            if (palierInferieur && palierSuperieur) {
+                const ratio = (nbFlux - palierInferieur.flux) / (palierSuperieur.flux - palierInferieur.flux);
+                const prixUnitaire = palierInferieur.prixUnitaire + 
+                    (palierSuperieur.prixUnitaire - palierInferieur.prixUnitaire) * ratio;
+                const totalMensuel = palierInferieur.totalMensuel + 
+                    (palierSuperieur.totalMensuel - palierInferieur.totalMensuel) * ratio;
+                
+                return {
+                    prixUnitaire: Math.round(prixUnitaire * 100) / 100,
+                    totalMensuel: Math.round(totalMensuel * 100) / 100
+                };
+            }
+            
+            return {
+                prixUnitaire: grille[0].prixUnitaire,
+                totalMensuel: nbFlux * grille[0].prixUnitaire
+            };
+        }
+        
+        function updateCommission() {
+            const ca = parseFloat(document.getElementById('ca_actuel').value) || 0;
+            const ventes = parseFloat(document.getElementById('ventes_actuel').value) || 0;
+            const commission = ventes > 0 ? ca / ventes : 0;
+            document.getElementById('commission_actuel').value = Math.round(commission);
+        }
+        
+        function goToStep(step) {
+            if (step < 1 || step > 5) return;
+            
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.progress-step').forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i + 1 < step) s.classList.add('completed');
+                if (i + 1 === step) s.classList.add('active');
+            });
+            
+            document.getElementById('step' + step).classList.add('active');
+            currentStep = step;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function nextStep() {
+            updateCommission();
+            if (currentStep < 5) {
+                goToStep(currentStep + 1);
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+        
+        function calculateAndShowResults() {
+            updateCommission();
+            
+            // Récupérer toutes les données
+            const agencyName = document.getElementById('agency_name').value || 'Mon Agence Immobilière';
+            const ca = parseFloat(document.getElementById('ca_actuel').value) || 0;
+            const ventes = parseFloat(document.getElementById('ventes_actuel').value) || 0;
+            const nbFlux = parseFloat(document.getElementById('nb_flux').value) || 0;
+            
+            // Calculer situation actuelle
+            const logiciels = (
+                (parseFloat(document.getElementById('logiciel_admin').value) || 0) +
+                (parseFloat(document.getElementById('comptes_users').value) || 0) +
+                (parseFloat(document.getElementById('logiciel_pige').value) || 0) +
+                (parseFloat(document.getElementById('ventes_predictives').value) || 0) +
+                (parseFloat(document.getElementById('vr360').value) || 0) +
+                (parseFloat(document.getElementById('ia_annonces').value) || 0) +
+                (parseFloat(document.getElementById('estimations').value) || 0) +
+                (parseFloat(document.getElementById('avis_valeur').value) || 0) +
+                (parseFloat(document.getElementById('signature').value) || 0) +
+                (parseFloat(document.getElementById('papeterie').value) || 0) +
+                (parseFloat(document.getElementById('video_photo').value) || 0) +
+                (parseFloat(document.getElementById('comm').value) || 0) +
+                (parseFloat(document.getElementById('formation').value) || 0) +
+                (parseFloat(document.getElementById('crm').value) || 0) +
+                (parseFloat(document.getElementById('compta').value) || 0)
+            ) * 12;
+            
+            const publicite = (
+                (parseFloat(document.getElementById('leboncoin').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('seloger').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('bienici').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('ubiflow').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('paruvendu').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('figaro').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('logicimmo').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('autres_annonceurs').value) || 0) * nbFlux +
+                (parseFloat(document.getElementById('pub_locale').value) || 0) +
+                (parseFloat(document.getElementById('ads_online').value) || 0)
+            ) * 12;
+            
+            const franchise = 
+                (parseFloat(document.getElementById('royalties_franchise').value) || 0) +
+                (parseFloat(document.getElementById('royalties_comm').value) || 0) +
+                (parseFloat(document.getElementById('frais_fixes').value) || 0);
+            
+            const gestion = (
+                (parseFloat(document.getElementById('juriste').value) || 0) +
+                ((parseFloat(document.getElementById('cout_horaire').value) || 0) * 
+                 (parseFloat(document.getElementById('heures_mois').value) || 0))
+            ) * 12 +
+                (parseFloat(document.getElementById('cotisation').value) || 0) +
+                (parseFloat(document.getElementById('assurance_rc').value) || 0) +
+                (parseFloat(document.getElementById('garantie_financiere').value) || 0) +
+                (parseFloat(document.getElementById('expert_comptable').value) || 0);
+            
+            const autresFrais = (
+                (parseFloat(document.getElementById('loyer').value) || 0) +
+                (parseFloat(document.getElementById('energie').value) || 0) +
+                (parseFloat(document.getElementById('telephone').value) || 0) +
+                (parseFloat(document.getElementById('carburant').value) || 0) +
+                (parseFloat(document.getElementById('fournitures').value) || 0) +
+                (parseFloat(document.getElementById('autres_frais').value) || 0)
+            ) * 12;
+            
+            const totalActuel = logiciels + publicite + franchise + gestion + autresFrais;
+            
+            // Calculer La Fédération
+            const adhesion = 3564;
+            const intercab = (ca * 2.7) / 100;
+            
+            // Calculer pour les 3 packs
+            const prixEssentiel = getPrixPack(nbFlux, GRILLE_ESSENTIEL, 12.5);
+            const prixVisibilite = getPrixPack(nbFlux, GRILLE_VISIBILITE, 25);
+            const prixAllInclus = getPrixPack(nbFlux, GRILLE_ALLINCLUS, 39);
+            
+            const totalEssentiel = adhesion + intercab + (prixEssentiel.totalMensuel * 12);
+            const totalVisibilite = adhesion + intercab + (prixVisibilite.totalMensuel * 12);
+            const totalAllInclus = adhesion + intercab + (prixAllInclus.totalMensuel * 12);
+            
+            const gainEssentiel = totalActuel - totalEssentiel;
+            const gainVisibilite = totalActuel - totalVisibilite;
+            const gainAllInclus = totalActuel - totalAllInclus;
+            
+            // Déterminer le meilleur pack (celui avec la plus grande économie)
+            let bestPack = 'allinclus';
+            let bestGain = gainAllInclus;
+            let bestTotal = totalAllInclus;
+            let bestPrix = prixAllInclus;
+            
+            if (gainVisibilite > bestGain) {
+                bestPack = 'visibilite';
+                bestGain = gainVisibilite;
+                bestTotal = totalVisibilite;
+                bestPrix = prixVisibilite;
+            }
+            if (gainEssentiel > bestGain) {
+                bestPack = 'essentiel';
+                bestGain = gainEssentiel;
+                bestTotal = totalEssentiel;
+                bestPrix = prixEssentiel;
+            }
+            
+            // Afficher les résultats
+            document.getElementById('agency_result_name').textContent = 'Résultats pour ' + agencyName;
+            document.getElementById('nb_flux_result').textContent = nbFlux;
+            document.getElementById('economy_result').textContent = 
+                (bestGain >= 0 ? '+ ' : '- ') + Math.abs(Math.round(bestGain)).toLocaleString('fr-FR') + ' €';
+            document.getElementById('economy_monthly_result').textContent = 
+                Math.abs(Math.round(bestGain / 12)).toLocaleString('fr-FR') + ' €';
+            
+            // Générer les cartes de comparaison
+            const packsHTML = `
+                <div class="pack-card ${bestPack === 'essentiel' ? 'selected' : ''}">
+                    <h3>Pack Essentiel</h3>
+                    <div class="pack-price">${Math.round(prixEssentiel.totalMensuel).toLocaleString('fr-FR')} €<span style="font-size: 0.5em; font-weight: normal;">/mois</span></div>
+                    <p style="color: #666; margin: 10px 0;">${Math.round(prixEssentiel.totalMensuel * 12).toLocaleString('fr-FR')} € /an</p>
+                    <p style="color: #666; margin: 10px 0;">${nbFlux} flux inclus</p>
+                    <div class="pack-gain ${gainEssentiel < 0 ? 'negative' : ''}">
+                        ${gainEssentiel >= 0 ? 'Économie' : 'Surcoût'} : ${Math.abs(Math.round(gainEssentiel)).toLocaleString('fr-FR')} €
+                    </div>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        ${Math.abs(Math.round(gainEssentiel / 12)).toLocaleString('fr-FR')} € /mois
+                    </p>
+                </div>
+                
+                <div class="pack-card ${bestPack === 'visibilite' ? 'selected' : ''}">
+                    <h3>Pack Visibilité</h3>
+                    <div class="pack-price">${Math.round(prixVisibilite.totalMensuel).toLocaleString('fr-FR')} €<span style="font-size: 0.5em; font-weight: normal;">/mois</span></div>
+                    <p style="color: #666; margin: 10px 0;">${Math.round(prixVisibilite.totalMensuel * 12).toLocaleString('fr-FR')} € /an</p>
+                    <p style="color: #666; margin: 10px 0;">${nbFlux} flux inclus</p>
+                    <div class="pack-gain ${gainVisibilite < 0 ? 'negative' : ''}">
+                        ${gainVisibilite >= 0 ? 'Économie' : 'Surcoût'} : ${Math.abs(Math.round(gainVisibilite)).toLocaleString('fr-FR')} €
+                    </div>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        ${Math.abs(Math.round(gainVisibilite / 12)).toLocaleString('fr-FR')} € /mois
+                    </p>
+                </div>
+                
+                <div class="pack-card ${bestPack === 'allinclus' ? 'selected' : ''}">
+                    <h3>Pack All Inclusif</h3>
+                    <div class="pack-price">${Math.round(prixAllInclus.totalMensuel).toLocaleString('fr-FR')} €<span style="font-size: 0.5em; font-weight: normal;">/mois</span></div>
+                    <p style="color: #666; margin: 10px 0;">${Math.round(prixAllInclus.totalMensuel * 12).toLocaleString('fr-FR')} € /an</p>
+                    <p style="color: #666; margin: 10px 0;">${nbFlux} flux inclus</p>
+                    <div class="pack-gain ${gainAllInclus < 0 ? 'negative' : ''}">
+                        ${gainAllInclus >= 0 ? 'Économie' : 'Surcoût'} : ${Math.abs(Math.round(gainAllInclus)).toLocaleString('fr-FR')} €
+                    </div>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        ${Math.abs(Math.round(gainAllInclus / 12)).toLocaleString('fr-FR')} € /mois
+                    </p>
+                </div>
+            `;
+            document.getElementById('packs_comparison').innerHTML = packsHTML;
+            
+            // Résumé situation actuelle
+            const currentSummaryHTML = `
+                <div class="summary-line">
+                    <span>Logiciels & Outils</span>
+                    <strong>${Math.round(logiciels).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Frais Publicitaire</span>
+                    <strong>${Math.round(publicite).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Frais de Franchise</span>
+                    <strong>${Math.round(franchise).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Frais de Gestion</span>
+                    <strong>${Math.round(gestion).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Autres Frais</span>
+                    <strong>${Math.round(autresFrais).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>TOTAL ANNUEL</span>
+                    <strong>${Math.round(totalActuel).toLocaleString('fr-FR')} €</strong>
+                </div>
+            `;
+            document.getElementById('current_summary').innerHTML = currentSummaryHTML;
+            
+            // Résumé La Fédération (meilleur pack)
+            const fedeSummaryHTML = `
+                <div class="summary-line">
+                    <span>Adhésion</span>
+                    <strong>${Math.round(adhesion).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Intercab (2.7% du CA)</span>
+                    <strong>${Math.round(intercab).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Pack ${bestPack === 'essentiel' ? 'Essentiel' : bestPack === 'visibilite' ? 'Visibilité' : 'All Inclusif'}</span>
+                    <strong>${Math.round(bestPrix.totalMensuel * 12).toLocaleString('fr-FR')} €</strong>
+                </div>
+                <div class="summary-line">
+                    <span>TOTAL ANNUEL</span>
+                    <strong>${Math.round(bestTotal).toLocaleString('fr-FR')} €</strong>
+                </div>
+            `;
+            document.getElementById('fede_summary').innerHTML = fedeSummaryHTML;
+            
+            goToStep(5);
+        }
+        
+        // Calculer la commission au chargement
+        window.addEventListener('load', function() {
+            updateCommission();
+            
+            // Mettre à jour la commission quand CA ou ventes change
+            document.getElementById('ca_actuel').addEventListener('input', updateCommission);
+            document.getElementById('ventes_actuel').addEventListener('input', updateCommission);
+        });
+    </script>
+</body>
+</html>
